@@ -1,22 +1,44 @@
 const express = require("express");
-const { adminAuth, userAuth } = require("./middlewares/auth");
+const connectDB = require("./config/database");
+const User = require("./models/user")
+
 const app = express();
 
-app.use("/admin", adminAuth)
-app.get("/admin/getAllData", (rew,res,next)=>{
-    res.send("request fullfilled");
-})
-app.use("/user", userAuth, (req,res,next)=>{
-    
-    console.log("handling user")
-    // res.send("route handler")
-    next();
-    },
-    (req, res)=>{
-        console.log("second handler")
-        res.send("2nd response")
+// Middleware to parse JSON requests
+app.use(express.json());
+
+app.post("/signup", async (req, res) => {
+   
+    try{
+        const { firstName, lastName, emailId, password, age, gender } = req.body;
+        const newUser = new User({
+            firstName,
+            lastName,
+            age,
+            emailId,
+            password,
+            gender
+        })
+        await newUser.save();
+
+        res.status(201).json({
+             message: "Signup successful", 
+             data: req.body 
+        });
+
+    } catch(error) {
+        console.error(error)
+        res.status(500).json({message: "Error creating user", error});
     }
-)
-app.listen(3000, ()=>{
-    console.log("server is listening on port 3000")
-})
+});
+
+connectDB()
+    .then(() => {
+        console.log("Database connected successfully");
+        app.listen(3000, () => {
+            console.log("App is running on port 3000");
+        });
+    })
+    .catch((err) => {
+        console.error(`Connection error: ${err}`);
+    });
