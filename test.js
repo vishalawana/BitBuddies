@@ -1,12 +1,6 @@
-function xyz(){
-    var a =19;
-    if(true){
-         var a = 10
-         console.log(`a is ${a}`)
+function freq(arr){
+    const frequency = {};
+    for(let i=0;i<arr.length;i++){
+        if()
     }
-   
-    console.log(`var a is ${a}`)
 }
-var a = 200;
-console.log(a)
-xyz();
